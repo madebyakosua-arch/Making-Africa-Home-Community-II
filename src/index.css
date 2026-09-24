@@ -2,27 +2,42 @@
 
 @theme {
   --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
-  --font-serif: 'Newsreader', Georgia, serif;
-  --color-ivory: #FAF7F2;
-  --color-ivory-light: #FDFBF7;
-  --color-ivory-dark: #F2EBE0;
-  --color-charcoal: #18191B;
-  --color-charcoal-muted: #52565A;
-  --color-forest: #153826;
-  --color-forest-dark: #0D2418;
-  --color-forest-light: #1D4B34;
-  --color-terracotta: #D36A38;
-  --color-sand: #EDE5D8;
+  --font-handwriting: 'Caveat', cursive, sans-serif;
+  --color-paper: #FFFFFF;
+  --color-paper-light: #FFFFFF;
+  --color-paper-muted: #F8FAFC;
+  --color-charcoal: #111827;
+  --color-charcoal-muted: #4B5563;
+  --color-forest: #0A5C36;
+  --color-terracotta: #C2410C;
+  --color-amber-gold: #D97706;
+  --color-burnt-orange: #EA580C;
+  --color-earth-brown: #5C3D2E;
 }
 
 body {
   font-family: var(--font-sans);
-  background-color: var(--color-ivory);
-  color: var(--color-charcoal);
+  background-color: #FFFFFF;
+  color: #111827;
+  background-image: radial-gradient(rgba(17, 24, 39, 0.035) 1px, transparent 1px);
+  background-size: 24px 24px;
 }
 
-.font-editorial-serif {
-  font-family: var(--font-serif);
+.font-handwriting {
+  font-family: var(--font-handwriting);
+}
+
+/* Whiteboard sketchy button line drawing */
+@keyframes sketch-stroke {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.draw-path {
+  stroke-dasharray: 400;
+  stroke-dashoffset: 400;
+  animation: sketch-stroke 1.2s ease-out forwards;
 }
 
 /* Custom smooth scrollbar */
@@ -31,13 +46,13 @@ body {
   height: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #FAF7F2;
+  background: #FFFFFF;
 }
 ::-webkit-scrollbar-thumb {
-  background: #D8D1C5;
+  background: #CBD5E1;
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #B8B0A2;
+  background: #94A3B8;
 }
 

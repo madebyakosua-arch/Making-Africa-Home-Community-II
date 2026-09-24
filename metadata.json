@@ -1,6 +1,6 @@
 {
   "name": "Making Africa Home",
-  "description": "A free community by Africa Link Collective for the diaspora and African diaspora moving to and building lives across Africa.",
+  "description": "Making Africa Home is a community for diasporians exploring, planning or building a life in Africa.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }
