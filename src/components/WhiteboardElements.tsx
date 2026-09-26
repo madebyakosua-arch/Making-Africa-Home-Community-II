@@ -947,16 +947,23 @@ export const SmilingHouseIcon: React.FC<{ className?: string }> = ({
 );
 
 // Hand-drawn Red/Orange Marker Strike-through
-export const HandDrawnStrikeThrough: React.FC<{ children: React.ReactNode; color?: string }> = ({
+export const HandDrawnStrikeThrough: React.FC<{
+  children: React.ReactNode;
+  color?: string;
+  className?: string;
+  lineClassName?: string;
+}> = ({
   children,
   color = '#E11D48',
+  className = '',
+  lineClassName = '',
 }) => (
-  <span className="relative inline-block">
+  <span className={`relative inline-block ${className}`}>
     <span className="opacity-60">{children}</span>
     <svg
       viewBox="0 0 100 20"
       preserveAspectRatio="none"
-      className="absolute inset-0 w-full h-full pointer-events-none overflow-visible -top-0.5"
+      className={`absolute inset-0 pointer-events-none overflow-visible -top-0.5 ${lineClassName || 'w-full h-full'}`}
     >
       <path
         d="M -2 11 Q 50 7 102 12"

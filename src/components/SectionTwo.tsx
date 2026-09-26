@@ -28,6 +28,10 @@ import {
   Heart,
   Briefcase,
   HelpCircle,
+  UserCheck,
+  Calendar,
+  Sparkles,
+  ArrowRight,
 } from 'lucide-react';
 import womanOnStreetImg from '../assets/images/african_woman_street_1790258865129.jpg';
 
@@ -119,7 +123,10 @@ export const SectionTwo: React.FC = () => {
           <p>Google can give you flight tickets and currency rates.</p>
 
           <p className="text-gray-400">
-            <HandDrawnStrikeThrough color="#E11D48">
+            <HandDrawnStrikeThrough
+              color="#E11D48"
+              lineClassName="w-[85%] left-[7.5%] sm:w-full sm:left-0 h-full"
+            >
               But Google will not invite you over for Sunday lunch.
             </HandDrawnStrikeThrough>
           </p>
@@ -171,6 +178,131 @@ export const SectionTwo: React.FC = () => {
             <span className="font-handwriting text-lg sm:text-xl font-bold text-[#0A5C36]">
               "Starting a new chapter is sweeter when you have good people around you."
             </span>
+          </div>
+        </div>
+
+        {/* KEY FEATURE: THE RELOCATION BUDDY */}
+        <div className="relative p-6 sm:p-9 rounded-3xl bg-gradient-to-br from-[#FFFBEB] via-white to-[#F0FDF4] border-2 border-[#0A5C36] shadow-md rotate-[0.3deg] hover:rotate-0 transition-transform">
+          {/* Decorative Digital Tape at corners */}
+          <DigitalTape color="#FDE047" angle="-4deg" className="-top-3.5 left-6 sm:left-12" />
+          <DigitalTape color="#86EFAC" angle="4deg" className="-top-3.5 right-6 sm:right-12" />
+
+          {/* Header Badge & Title */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 mb-4">
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] sm:text-xs font-black uppercase tracking-wider text-[#0A5C36] bg-[#0A5C36]/15 px-3 py-1 rounded-full flex items-center gap-1.5 shadow-2xs">
+                <Sparkles className="w-3.5 h-3.5 text-[#D97706] fill-[#D97706]" />
+                Key Feature in Our Free Community
+              </span>
+              <span className="hidden sm:inline-block text-xs font-bold text-[#EA580C] bg-[#EA580C]/10 px-2.5 py-0.5 rounded-full">
+                100% Free
+              </span>
+            </div>
+
+            <span className="font-handwriting text-sm sm:text-base font-bold text-[#D97706]">
+              "Never land without a friend waiting for you" ✨
+            </span>
+          </div>
+
+          <div className="max-w-3xl mb-6">
+            <h3 className="font-handwriting text-3xl sm:text-5xl font-extrabold text-[#111827] tracking-tight mb-2">
+              The "Relocation Buddy" 🤝
+            </h3>
+            <p className="text-base sm:text-xl font-bold text-[#0A5C36] leading-snug">
+              Pairing someone who is 3 months away from moving with someone who moved last year or a reliable local in their country.
+            </p>
+            <p className="text-xs sm:text-sm text-[#4B5563] mt-2 leading-relaxed">
+              When you are 90 days out, everything gets real: shipping dates, finding a home, sorting Wi-Fi, and packing your life into bags. Instead of worrying alone late at night, you get paired one-on-one with someone who has your back.
+            </p>
+          </div>
+
+          {/* How the Buddy Pairing Works - 3 Whiteboard Step Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 sm:gap-4 mb-6">
+            {/* Step 1 */}
+            <div className="p-4 sm:p-5 rounded-2xl bg-white/90 border-2 border-amber-200/90 shadow-2xs relative">
+              <div className="flex items-center justify-between mb-2">
+                <span className="w-7 h-7 rounded-xl bg-amber-100 text-[#D97706] font-black text-xs flex items-center justify-center">
+                  1
+                </span>
+                <span className="text-[11px] font-bold text-[#EA580C] bg-orange-50 px-2 py-0.5 rounded-md">
+                  3 Months Out
+                </span>
+              </div>
+              <h4 className="font-extrabold text-sm sm:text-base text-[#111827] mb-1">
+                You share your move date
+              </h4>
+              <p className="text-xs text-[#4B5563] leading-relaxed">
+                Tell us which country and city you are heading to and your target month. No complicated forms—just a friendly intro.
+              </p>
+            </div>
+
+            {/* Step 2 */}
+            <div className="p-4 sm:p-5 rounded-2xl bg-white/90 border-2 border-emerald-200/90 shadow-2xs relative">
+              <div className="flex items-center justify-between mb-2">
+                <span className="w-7 h-7 rounded-xl bg-emerald-100 text-[#0A5C36] font-black text-xs flex items-center justify-center">
+                  2
+                </span>
+                <span className="text-[11px] font-bold text-[#0A5C36] bg-emerald-50 px-2 py-0.5 rounded-md">
+                  Your Match
+                </span>
+              </div>
+              <h4 className="font-extrabold text-sm sm:text-base text-[#111827] mb-1">
+                Get paired with your Buddy
+              </h4>
+              <p className="text-xs text-[#4B5563] leading-relaxed">
+                We pair you with either a <strong>diasporian who moved last year</strong> (they remember every fear you feel) or a <strong>reliable local</strong> who knows the ground reality.
+              </p>
+            </div>
+
+            {/* Step 3 */}
+            <div className="p-4 sm:p-5 rounded-2xl bg-white/90 border-2 border-sky-200/90 shadow-2xs relative">
+              <div className="flex items-center justify-between mb-2">
+                <span className="w-7 h-7 rounded-xl bg-sky-100 text-[#0284C7] font-black text-xs flex items-center justify-center">
+                  3
+                </span>
+                <span className="text-[11px] font-bold text-[#0284C7] bg-sky-50 px-2 py-0.5 rounded-md">
+                  Peace of Mind
+                </span>
+              </div>
+              <h4 className="font-extrabold text-sm sm:text-base text-[#111827] mb-1">
+                Ask & land with confidence
+              </h4>
+              <p className="text-xs text-[#4B5563] leading-relaxed">
+                Check realistic rents, good areas, solar backup, and Wi-Fi tips. And best of all: have a friendly face ready to meet for lunch or coffee when you arrive!
+              </p>
+            </div>
+          </div>
+
+          {/* Quick Perks Strip */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-3 pb-4 border-t border-[#0A5C36]/15 text-xs text-[#1F2937]">
+            <div className="flex items-center gap-2">
+              <UserCheck className="w-4 h-4 text-[#0A5C36] shrink-0" />
+              <span><strong>Zero guessing:</strong> Honest answers, no sales pitches</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Calendar className="w-4 h-4 text-[#EA580C] shrink-0" />
+              <span><strong>Timed perfectly:</strong> Active support right when you need it</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Heart className="w-4 h-4 text-[#E11D48] shrink-0 fill-[#E11D48]" />
+              <span><strong>Free community perk:</strong> Open to all members</span>
+            </div>
+          </div>
+
+          {/* Small button inside the card */}
+          <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <span className="font-handwriting text-sm sm:text-base font-bold text-[#0A5C36]">
+              "No agency fees. Just good people looking out for each other." 💚
+            </span>
+
+            <HandDrawnButton
+              href={FACEBOOK_COMMUNITY_URL}
+              variant="primary"
+              className="text-xs sm:text-sm px-5 py-2.5 bg-[#0A5C36] hover:bg-[#07472A] text-white rounded-xl shadow-sm cursor-pointer select-none inline-flex items-center justify-center gap-1.5"
+            >
+              <span>Join to Request a Buddy</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </HandDrawnButton>
           </div>
         </div>
 
@@ -348,14 +480,27 @@ export const SectionTwo: React.FC = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-5">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-5">
+            <div className="p-4 rounded-2xl bg-emerald-50/70 border border-emerald-200">
+              <div className="flex items-center gap-2 text-xs font-bold text-[#0A5C36] mb-1">
+                <UserCheck className="w-4 h-4 shrink-0" />
+                <span>The Relocation Buddy Match</span>
+              </div>
+              <p className="font-extrabold text-sm sm:text-base text-[#111827] mb-1">
+                Paired 3 months before your move
+              </p>
+              <p className="text-xs text-[#4B5563]">
+                Get matched with someone who made the move last year or a trusted local in your target city.
+              </p>
+            </div>
+
             <div className="p-4 rounded-2xl bg-gray-50 border border-gray-200">
               <div className="flex items-center gap-2 text-xs font-bold text-[#EA580C] mb-1">
                 <Video className="w-4 h-4 shrink-0" />
                 <span>Monthly Online Q&A</span>
               </div>
               <p className="font-extrabold text-sm sm:text-base text-[#111827] mb-1">
-                Moving with family & finding schools
+                Moving with family & schools
               </p>
               <p className="text-xs text-[#4B5563]">
                 Diaspora parents share what school choices, healthcare, and daily budgets really look like.
@@ -363,7 +508,7 @@ export const SectionTwo: React.FC = () => {
             </div>
 
             <div className="p-4 rounded-2xl bg-gray-50 border border-gray-200">
-              <div className="flex items-center gap-2 text-xs font-bold text-[#0A5C36] mb-1">
+              <div className="flex items-center gap-2 text-xs font-bold text-[#0284C7] mb-1">
                 <Clock className="w-4 h-4 shrink-0" />
                 <span>Sunday Welcome Chat</span>
               </div>
@@ -390,9 +535,15 @@ export const SectionTwo: React.FC = () => {
           You do not have to make Africa home alone.
         </h3>
 
-        <p className="text-sm sm:text-base text-[#374151] max-w-xl mx-auto mb-6 leading-relaxed">
+        <p className="text-sm sm:text-base text-[#374151] max-w-xl mx-auto mb-5 leading-relaxed">
           Come meet good people. Ask the things you are wondering about. Share what you know. And make real friends for the road ahead.
         </p>
+
+        {/* Founding member badge */}
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-50 border border-amber-200/90 text-amber-900 text-xs sm:text-sm font-semibold mb-6 shadow-2xs">
+          <span className="w-2 h-2 rounded-full bg-[#EA580C] shrink-0" />
+          <span>Just opening our doors: Join as a Founding Member • Small, intimate & zero spam</span>
+        </div>
 
         {/* Big colourful button */}
         <div className="relative inline-flex flex-col items-center mb-6 w-full sm:w-auto">

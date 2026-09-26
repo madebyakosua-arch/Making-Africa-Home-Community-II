@@ -18,7 +18,7 @@ import {
 } from './WhiteboardElements';
 import { Logo } from './Logo';
 import { AboutCollectiveModal } from './AboutCollectiveModal';
-import { Users, Heart, Sparkles } from 'lucide-react';
+import { Users, Heart, Sparkles, ArrowRight, ShieldCheck } from 'lucide-react';
 import womanInAfricaImg from '../assets/images/african_woman_africa_1790258843292.jpg';
 
 const FACEBOOK_COMMUNITY_URL = 'https://www.facebook.com/share/g/1Bua3PKEEQ/';
@@ -40,7 +40,7 @@ const JOURNEY_STEPS = [
   },
   {
     title: 'Packing bags',
-    desc: 'Shipping, sorting, and saying goodbyes',
+    desc: '3 mos out? Get a Relocation Buddy',
     icon: <HandDrawnSuitcaseIcon className="w-7 h-7 sm:w-8 sm:h-8" color="#C2410C" />,
     color: '#C2410C',
     step: '3',
@@ -161,7 +161,7 @@ export const SectionOne: React.FC = () => {
             </div>
             <div className="flex items-center gap-2 p-2 rounded-xl bg-emerald-50/70 border border-emerald-100">
               <span className="text-[#0A5C36] text-lg">🤝</span>
-              <span>Make friends before you board</span>
+              <span>The "Relocation Buddy" (3 mos out)</span>
             </div>
             <div className="flex items-center gap-2 p-2 rounded-xl bg-sky-50/70 border border-sky-100">
               <span className="text-[#0284C7] text-lg">💡</span>
@@ -196,11 +196,13 @@ export const SectionOne: React.FC = () => {
 
             {/* Explaining what happens next */}
             <div className="pt-1 text-xs sm:text-sm text-[#4B5563] font-medium flex flex-wrap items-center gap-2">
-              <span>Takes less than a minute.</span>
+              <span className="inline-flex items-center gap-1 text-[#D97706] font-bold bg-amber-50 border border-amber-200/80 px-2 py-0.5 rounded-md">
+                🌱 Opening Our Doors
+              </span>
               <span>•</span>
-              <span className="text-[#0A5C36] font-bold">Diasporians & Locals together</span>
+              <span className="text-[#0A5C36] font-bold">Join as a Founding Member</span>
               <span>•</span>
-              <span className="text-gray-500">No fees ever</span>
+              <span className="text-gray-500">Free forever</span>
             </div>
           </div>
         </div>
@@ -249,7 +251,7 @@ export const SectionOne: React.FC = () => {
       {/* 3. WHAT ACTUALLY HAPPENS INSIDE? (Clear everyday diasporian scenarios) */}
       <div className="my-14 sm:my-20 pt-6 border-t-2 border-dashed border-gray-200">
         {/* Whiteboard handwritten question heading */}
-        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
+        <div className="text-center max-w-3xl mx-auto mb-8 sm:mb-10">
           <span className="text-xs font-extrabold uppercase tracking-wider text-[#0A5C36] bg-[#0A5C36]/10 px-3 py-1 rounded-full mb-2 inline-block">
             Inside The Community
           </span>
@@ -321,6 +323,7 @@ export const SectionOne: React.FC = () => {
             </p>
 
             <div className="space-y-2 text-sm sm:text-base text-[#374151] mb-5 leading-relaxed">
+              <p>• <strong>The "Relocation Buddy":</strong> Paired 3 months before your move with someone who moved last year or a reliable local.</p>
               <p>• <strong>Diasporians planning:</strong> Moving on the same timeline as you.</p>
               <p>• <strong>Diasporians settled:</strong> Already living there and happy to guide you.</p>
               <p>• <strong>Warm locals:</strong> Giving you the true local perspective with open arms.</p>
@@ -395,6 +398,96 @@ export const SectionOne: React.FC = () => {
                 "Africa becomes home when you have community." 🏡
               </span>
             </div>
+          </div>
+        </div>
+
+        {/* NEW COMMUNITY ANNOUNCEMENT: A & B (Positioned directly after 'Get support after the flight lands' box) */}
+        <div className="relative mt-8 sm:mt-10 p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-[#FEFCE8] via-white to-[#F0FDF4] border-2 border-[#D97706]/60 shadow-sm max-w-5xl mx-auto">
+          {/* Digital Tape decoration */}
+          <DigitalTape color="#FDE047" angle="-3deg" className="-top-3.5 left-8 sm:left-14" />
+          <DigitalTape color="#86EFAC" angle="4deg" className="-top-3.5 right-8 sm:right-14" />
+
+          {/* Top Header Tag */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 mb-5 pb-3 border-b border-amber-200/80">
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-black uppercase tracking-wider text-[#92400E] bg-amber-200/70 px-3 py-1 rounded-full flex items-center gap-1.5 shadow-2xs">
+                <Sparkles className="w-3.5 h-3.5 text-[#D97706] fill-[#D97706]" />
+                New Free Community • Early Access
+              </span>
+              <span className="hidden sm:inline-block text-xs font-bold text-[#0A5C36] bg-emerald-100/80 px-2.5 py-0.5 rounded-full">
+                Just Opening Our Doors
+              </span>
+            </div>
+            <span className="font-handwriting text-sm sm:text-base font-bold text-[#D97706]">
+              "Be part of the early circle" ✨
+            </span>
+          </div>
+
+          {/* 2 Visible Feature Columns: A & B */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+            {/* A: Founding Members */}
+            <div className="p-4 sm:p-5 rounded-2xl bg-white/95 border-2 border-amber-200/90 shadow-2xs hover:border-[#D97706] transition-colors relative">
+              <div className="flex items-center gap-2 mb-2 text-[#D97706]">
+                <span className="w-8 h-8 rounded-xl bg-amber-100 flex items-center justify-center text-lg">
+                  🌟
+                </span>
+                <div>
+                  <span className="text-[10px] font-black uppercase tracking-wider text-[#92400E] bg-amber-50 px-2 py-0.5 rounded-md">
+                    Founding Member Invitation
+                  </span>
+                  <h3 className="font-extrabold text-base sm:text-lg text-[#111827] leading-tight">
+                    Join as a Founding Member
+                  </h3>
+                </div>
+              </div>
+              <p className="text-sm sm:text-base font-medium text-[#1F2937] leading-relaxed">
+                We’re just opening our doors! Join as one of our <strong>Founding Members</strong> and help us shape this space from day one.
+              </p>
+              <p className="text-xs text-[#6B7280] mt-2.5 leading-relaxed">
+                Because you are here at the beginning, you get direct personal support, early Relocation Buddy pairing, and an active voice in shaping our meetups and resources.
+              </p>
+            </div>
+
+            {/* B: Intimate & No-Spam Advantage */}
+            <div className="p-4 sm:p-5 rounded-2xl bg-white/95 border-2 border-emerald-200/90 shadow-2xs hover:border-[#0A5C36] transition-colors relative">
+              <div className="flex items-center gap-2 mb-2 text-[#0A5C36]">
+                <span className="w-8 h-8 rounded-xl bg-emerald-100 flex items-center justify-center text-lg">
+                  🛡️
+                </span>
+                <div>
+                  <span className="text-[10px] font-black uppercase tracking-wider text-[#065F46] bg-emerald-50 px-2 py-0.5 rounded-md">
+                    Intimate & Safe
+                  </span>
+                  <h3 className="font-extrabold text-base sm:text-lg text-[#111827] leading-tight">
+                    Small, Intimate & No Noise
+                  </h3>
+                </div>
+              </div>
+              <p className="text-sm sm:text-base font-medium text-[#1F2937] leading-relaxed">
+                We are intentionally starting small and intimate. No spam, no aggressive property agents, no noise—just genuine diasporians and locals connecting directly and helping each other move home.
+              </p>
+              <p className="text-xs text-[#6B7280] mt-2.5 leading-relaxed">
+                You will never get lost in a noisy crowd of thousands. Every post is read, every question gets answered, and everyone is treated with genuine warmth.
+              </p>
+            </div>
+          </div>
+
+          {/* Footer Ribbon inside the card */}
+          <div className="mt-4 pt-3.5 border-t border-amber-200/60 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs sm:text-sm">
+            <div className="flex items-center gap-2 text-[#0A5C36] font-medium">
+              <ShieldCheck className="w-4 h-4 shrink-0" />
+              <span>100% Free • Safe & respectful space • No agency fees</span>
+            </div>
+
+            <a
+              href={FACEBOOK_COMMUNITY_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-[#0A5C36] hover:bg-[#07472A] text-white font-bold transition-all shadow-xs cursor-pointer self-start sm:self-auto"
+            >
+              <span>Claim Your Founding Member Spot</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </a>
           </div>
         </div>
       </div>

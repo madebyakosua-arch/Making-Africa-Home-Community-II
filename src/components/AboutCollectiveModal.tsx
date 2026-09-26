@@ -102,6 +102,36 @@ export const AboutCollectiveModal: React.FC<AboutCollectiveModalProps> = ({
                   <strong>Making Africa Home</strong> is our dedicated, free Facebook community. Moving to a new country can feel scary when you try to figure it all out by yourself. We made this space so you never have to do it alone.
                 </p>
                 <div className="space-y-2 text-xs sm:text-sm text-[#111827]">
+                  {/* Key Feature: The Relocation Buddy */}
+                  <div className="p-3 rounded-xl bg-amber-50/80 border border-amber-200/90 mb-2">
+                    <div className="flex items-center gap-1.5 mb-1">
+                      <span className="text-[10px] font-black uppercase tracking-wider text-[#92400E] bg-amber-100 px-2 py-0.5 rounded-md">
+                        Key Community Feature
+                      </span>
+                      <strong className="text-xs sm:text-sm font-extrabold text-[#111827]">
+                        The "Relocation Buddy" 🤝
+                      </strong>
+                    </div>
+                    <p className="text-xs text-[#78350F] leading-relaxed">
+                      Pairing someone who is <strong>3 months away from moving</strong> with <strong>someone who moved last year</strong> or a <strong>reliable local in their country</strong>. You get real one-on-one clarity before you fly and a warm friend when you arrive.
+                    </p>
+                  </div>
+
+                  {/* Founding Members & Intimate Atmosphere Note */}
+                  <div className="p-3 rounded-xl bg-emerald-50/90 border border-emerald-200 mb-2.5">
+                    <div className="flex items-center gap-1.5 mb-1">
+                      <span className="text-[10px] font-black uppercase tracking-wider text-[#065F46] bg-emerald-100 px-2 py-0.5 rounded-md">
+                        Founding Member Circle
+                      </span>
+                      <strong className="text-xs sm:text-sm font-extrabold text-[#111827]">
+                        Just Opening Our Doors 🌱
+                      </strong>
+                    </div>
+                    <p className="text-xs text-[#065F46] leading-relaxed">
+                      We’re just opening our doors! Join as one of our <strong>Founding Members</strong> and help us shape this space from day one. We are intentionally starting small and intimate. No spam, no aggressive property agents, no noise—just genuine diasporians and locals connecting directly and helping each other move home.
+                    </p>
+                  </div>
+
                   <div className="flex items-start gap-2.5">
                     <CheckCircle2 className="w-4 h-4 text-[#0A5C36] shrink-0 mt-0.5" />
                     <span>
