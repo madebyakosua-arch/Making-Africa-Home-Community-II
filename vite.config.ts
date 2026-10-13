@@ -162,6 +162,39 @@ function feedbackApiPlugin(): Plugin {
 
               feedbackRecords.push(record);
 
+              // Forward to Google Form if configured in environment variables
+              const googleFormUrl = process.env.GOOGLE_FORM_POST_URL;
+              if (googleFormUrl && googleFormUrl.startsWith('https://docs.google.com/forms/')) {
+                try {
+                  const formParams = new URLSearchParams();
+                  if (process.env.GOOGLE_FORM_ENTRY_REASON) {
+                    formParams.append(process.env.GOOGLE_FORM_ENTRY_REASON, record.reason);
+                  }
+                  if (process.env.GOOGLE_FORM_ENTRY_NAME && record.firstName) {
+                    formParams.append(process.env.GOOGLE_FORM_ENTRY_NAME, record.firstName);
+                  }
+                  if (process.env.GOOGLE_FORM_ENTRY_EMAIL && record.email) {
+                    formParams.append(process.env.GOOGLE_FORM_ENTRY_EMAIL, record.email);
+                  }
+                  if (process.env.GOOGLE_FORM_ENTRY_ADDITIONAL && record.additionalFeedback) {
+                    formParams.append(process.env.GOOGLE_FORM_ENTRY_ADDITIONAL, record.additionalFeedback);
+                  }
+                  if (process.env.GOOGLE_FORM_ENTRY_PAGE_URL) {
+                    formParams.append(process.env.GOOGLE_FORM_ENTRY_PAGE_URL, record.pageUrl);
+                  }
+
+                  fetch(googleFormUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: formParams.toString(),
+                  })
+                    .then(() => console.log(`[Google Form] Successfully forwarded feedback ID: ${id}`))
+                    .catch((err) => console.warn(`[Google Form Forward Error]:`, err.message));
+                } catch (gErr: any) {
+                  console.warn(`[Google Form Forward Exception]:`, gErr.message);
+                }
+              }
+
               // Server log (omits personal email / name to keep logs clean and private)
               console.log(`[Feedback Received] ID: ${id}, Reason: "${record.reason}", HasEmail: ${Boolean(record.email)}, Verified: false`);
               if (confirmationLink) {
