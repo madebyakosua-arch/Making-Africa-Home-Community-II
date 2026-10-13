@@ -34,6 +34,7 @@ import {
   ArrowRight,
 } from 'lucide-react';
 import womanOnStreetImg from '../assets/images/african_woman_street_1790258865129.jpg';
+import { feedbackService } from '../utils/feedbackService';
 
 const FACEBOOK_COMMUNITY_URL = 'https://www.facebook.com/share/g/1Bua3PKEEQ/';
 
@@ -90,10 +91,20 @@ const CHECKLIST_ITEMS = [
   'A local brother or sister who loves welcoming people home?',
 ];
 
-export const SectionTwo: React.FC = () => {
+interface SectionTwoProps {
+  onOpenPrivacy?: () => void;
+}
+
+export const SectionTwo: React.FC<SectionTwoProps> = ({ onOpenPrivacy }) => {
   const [activeModal, setActiveModal] = useState<'privacy' | 'contact' | 'collective' | null>(null);
   const [contactSubmitted, setContactSubmitted] = useState(false);
   const [contactMessage, setContactMessage] = useState({ name: '', email: '', note: '' });
+
+  React.useEffect(() => {
+    const handleOpenPrivacy = () => setActiveModal('privacy');
+    window.addEventListener('open-privacy-modal', handleOpenPrivacy);
+    return () => window.removeEventListener('open-privacy-modal', handleOpenPrivacy);
+  }, []);
 
   const handleContactSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -550,6 +561,7 @@ export const SectionTwo: React.FC = () => {
           <HandDrawnButton
             id="final-join-making-africa-home-btn"
             href={FACEBOOK_COMMUNITY_URL}
+            onClick={() => feedbackService.markUserJoinedCommunity()}
             variant="primary"
             className="w-full sm:w-auto text-base sm:text-xl px-7 py-3.5 sm:px-10 sm:py-4 bg-[#0A5C36] hover:bg-[#07472A] text-white rounded-2xl shadow-lg relative cursor-pointer select-none"
           >

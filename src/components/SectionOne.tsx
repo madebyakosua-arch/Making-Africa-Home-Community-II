@@ -20,6 +20,7 @@ import { Logo } from './Logo';
 import { AboutCollectiveModal } from './AboutCollectiveModal';
 import { Users, Heart, Sparkles, ArrowRight, ShieldCheck } from 'lucide-react';
 import womanInAfricaImg from '../assets/images/african_woman_africa_1790258843292.jpg';
+import { feedbackService } from '../utils/feedbackService';
 
 const FACEBOOK_COMMUNITY_URL = 'https://www.facebook.com/share/g/1Bua3PKEEQ/';
 
@@ -104,6 +105,7 @@ export const SectionOne: React.FC = () => {
             href={FACEBOOK_COMMUNITY_URL}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => feedbackService.markUserJoinedCommunity()}
             className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 sm:px-5 sm:py-2.5 rounded-xl bg-[#0A5C36] hover:bg-[#07472A] text-white text-xs sm:text-sm font-bold shadow-sm hover:shadow-md transition-all cursor-pointer select-none"
           >
             <Users className="w-4 h-4 shrink-0" />
@@ -179,6 +181,7 @@ export const SectionOne: React.FC = () => {
               <HandDrawnButton
                 id="section-one-join-btn"
                 href={FACEBOOK_COMMUNITY_URL}
+                onClick={() => feedbackService.markUserJoinedCommunity()}
                 variant="primary"
                 className="w-full sm:w-auto text-center text-base sm:text-lg px-7 py-3.5 bg-[#0A5C36] hover:bg-[#07472A] text-white rounded-2xl shadow-md cursor-pointer select-none"
               >
@@ -483,6 +486,7 @@ export const SectionOne: React.FC = () => {
               href={FACEBOOK_COMMUNITY_URL}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={() => feedbackService.markUserJoinedCommunity()}
               className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-[#0A5C36] hover:bg-[#07472A] text-white font-bold transition-all shadow-xs cursor-pointer self-start sm:self-auto"
             >
               <span>Claim Your Founding Member Spot</span>
