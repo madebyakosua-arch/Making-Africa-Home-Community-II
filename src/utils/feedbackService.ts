@@ -149,7 +149,27 @@ export const feedbackService = {
       const result = await response.json();
       return result;
     } catch (err: any) {
-      // In case API server is unreachable (e.g. pure static build), provide local fallback
+      // In case API server is unreachable (e.g. pure static build or Netlify preview), submit directly to Google Form
+      try {
+        const gfUrl = 'https://docs.google.com/forms/d/e/1FAIpQLSdkvb3G_LmgdYddk2zy12fUK68NQ3wzglXwpB1YJIhoZoSQcQ/formResponse';
+        const params = new URLSearchParams();
+        params.append('entry.1900871461', payload.reason);
+        if (payload.firstName) params.append('entry.1157894748', payload.firstName);
+        if (payload.email) params.append('entry.1200870677', payload.email);
+        params.append('entry.1315210203', payload.pageUrl || window.location.href);
+        params.append('entry.1582234292', payload.additionalFeedback || 'N/A');
+
+        // mode: 'no-cors' allows submission to Google Form from any static origin without CORS blocking
+        fetch(gfUrl, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: params.toString(),
+        }).catch(() => {});
+      } catch {
+        // Ignore
+      }
+
       const fallbackToken = payload.email ? Math.random().toString(36).substring(2, 15) : undefined;
       const fallbackConfirmationLink = payload.email
         ? `${window.location.origin}?confirm_feedback=${fallbackToken}`

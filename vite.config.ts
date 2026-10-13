@@ -162,37 +162,37 @@ function feedbackApiPlugin(): Plugin {
 
               feedbackRecords.push(record);
 
-              // Forward to Google Form if configured in environment variables
-              const googleFormUrl = process.env.GOOGLE_FORM_POST_URL;
-              if (googleFormUrl && googleFormUrl.startsWith('https://docs.google.com/forms/')) {
-                try {
-                  const formParams = new URLSearchParams();
-                  if (process.env.GOOGLE_FORM_ENTRY_REASON) {
-                    formParams.append(process.env.GOOGLE_FORM_ENTRY_REASON, record.reason);
-                  }
-                  if (process.env.GOOGLE_FORM_ENTRY_NAME && record.firstName) {
-                    formParams.append(process.env.GOOGLE_FORM_ENTRY_NAME, record.firstName);
-                  }
-                  if (process.env.GOOGLE_FORM_ENTRY_EMAIL && record.email) {
-                    formParams.append(process.env.GOOGLE_FORM_ENTRY_EMAIL, record.email);
-                  }
-                  if (process.env.GOOGLE_FORM_ENTRY_ADDITIONAL && record.additionalFeedback) {
-                    formParams.append(process.env.GOOGLE_FORM_ENTRY_ADDITIONAL, record.additionalFeedback);
-                  }
-                  if (process.env.GOOGLE_FORM_ENTRY_PAGE_URL) {
-                    formParams.append(process.env.GOOGLE_FORM_ENTRY_PAGE_URL, record.pageUrl);
-                  }
+              // Forward to Google Form
+              const googleFormUrl = process.env.GOOGLE_FORM_POST_URL || 'https://docs.google.com/forms/d/e/1FAIpQLSdkvb3G_LmgdYddk2zy12fUK68NQ3wzglXwpB1YJIhoZoSQcQ/formResponse';
+              const entryReason = process.env.GOOGLE_FORM_ENTRY_REASON || 'entry.1900871461';
+              const entryFirstName = process.env.GOOGLE_FORM_ENTRY_NAME || 'entry.1157894748';
+              const entryEmail = process.env.GOOGLE_FORM_ENTRY_EMAIL || 'entry.1200870677';
+              const entryPageUrl = process.env.GOOGLE_FORM_ENTRY_PAGE_URL || 'entry.1315210203';
+              const entryAdditional = process.env.GOOGLE_FORM_ENTRY_ADDITIONAL || 'entry.1582234292';
 
-                  fetch(googleFormUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: formParams.toString(),
-                  })
-                    .then(() => console.log(`[Google Form] Successfully forwarded feedback ID: ${id}`))
-                    .catch((err) => console.warn(`[Google Form Forward Error]:`, err.message));
-                } catch (gErr: any) {
-                  console.warn(`[Google Form Forward Exception]:`, gErr.message);
+              try {
+                const formParams = new URLSearchParams();
+                formParams.append(entryReason, record.reason);
+                if (record.firstName) {
+                  formParams.append(entryFirstName, record.firstName);
                 }
+                if (record.email) {
+                  formParams.append(entryEmail, record.email);
+                }
+                formParams.append(entryPageUrl, record.pageUrl || '/');
+                formParams.append(entryAdditional, record.additionalFeedback || 'N/A');
+
+                fetch(googleFormUrl, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                  body: formParams.toString(),
+                })
+                  .then((gfRes) => {
+                    console.log(`[Google Form] Forwarded feedback ID: ${id}, HTTP Status: ${gfRes.status}`);
+                  })
+                  .catch((err) => console.warn(`[Google Form Forward Error]:`, err.message));
+              } catch (gErr: any) {
+                console.warn(`[Google Form Forward Exception]:`, gErr.message);
               }
 
               // Server log (omits personal email / name to keep logs clean and private)
