@@ -19,7 +19,7 @@ import {
 import { Logo } from './Logo';
 import { AboutCollectiveModal } from './AboutCollectiveModal';
 import { Users, Heart, Sparkles, ArrowRight, ShieldCheck } from 'lucide-react';
-import womanInAfricaImg from '../assets/images/african_woman_africa_1790258843292.jpg';
+import womanInAfricaImg from '../assets/images/diaspora_group_friends_1791936527092.jpg';
 import { feedbackService } from '../utils/feedbackService';
 
 const FACEBOOK_COMMUNITY_URL = 'https://www.facebook.com/share/g/1Bua3PKEEQ/';
@@ -221,16 +221,17 @@ export const SectionOne: React.FC = () => {
             <div className="relative p-2.5 sm:p-3 pb-7 sm:pb-8 bg-white rounded-3xl shadow-lg border-2 border-gray-200 rotate-1 hover:rotate-0 transition-transform">
               <img
                 src={womanInAfricaImg}
-                alt="Beautiful radiant African woman smiling warmly at an outdoor cafe in Africa"
-                className="w-full h-72 sm:h-84 md:h-96 object-cover rounded-2xl"
+                alt="A smiling African woman with box braids and a group of African friends who have moved to Africa, all smiling and enjoying life together"
+                className="w-full h-72 sm:h-84 md:h-[380px] object-cover object-center rounded-2xl"
                 loading="eager"
+                referrerPolicy="no-referrer"
               />
 
               {/* Handwritten note below photo */}
               <div className="mt-3 px-2 flex items-center justify-between">
                 <div>
                   <span className="font-handwriting text-lg sm:text-xl font-bold text-[#111827] block">
-                    Living, smiling, and feeling at home in Africa.
+                    Living, thriving, and feeling at home in Africa.
                   </span>
                   <span className="text-xs text-[#0A5C36] font-bold flex items-center gap-1 mt-0.5">
                     <Heart className="w-3.5 h-3.5 fill-[#0A5C36]" />
