@@ -1,6 +1,7 @@
 /**
  * Utility to manage user status, exit intent suppression, feedback persistence,
- * and reliable Google Form submission across all environments (Vite dev server, Netlify, Cloud Run).
+ * and reliable submission to Formspree (https://formspree.io/f/mkjokevb)
+ * and Google Form across all environments (Vite dev server, Netlify, Cloud Run).
  */
 
 const STORAGE_KEYS = {
@@ -13,8 +14,10 @@ const STORAGE_KEYS = {
 
 const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
 
-// Google Form Details:
-// Form URL: https://docs.google.com/forms/d/e/1FAIpQLSdkvb3G_LmgdYddk2zy12fUK68NQ3wzglXwpB1YJIhoZoSQcQ/formResponse
+// Primary Endpoint: Formspree
+export const FORMSPREE_ENDPOINT = 'https://formspree.io/f/mkjokevb';
+
+// Secondary Endpoint: Google Form
 const GOOGLE_FORM_ACTION_URL =
   'https://docs.google.com/forms/d/e/1FAIpQLSdkvb3G_LmgdYddk2zy12fUK68NQ3wzglXwpB1YJIhoZoSQcQ/formResponse';
 
@@ -27,9 +30,43 @@ const GOOGLE_FORM_ENTRIES = {
 };
 
 /**
+ * Sends feedback directly to Formspree endpoint (https://formspree.io/f/mkjokevb)
+ */
+export async function sendToFormspree(payload: {
+  reason: string;
+  additionalFeedback?: string;
+  firstName?: string;
+  email?: string;
+  consent: boolean;
+  pageUrl?: string;
+}) {
+  try {
+    const res = await fetch(FORMSPREE_ENDPOINT, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: payload.firstName || '',
+        email: payload.email || '',
+        reason: payload.reason,
+        additionalFeedback: payload.additionalFeedback || 'N/A',
+        consentGiven: payload.consent ? 'Yes' : 'No',
+        pageUrl: payload.pageUrl || (typeof window !== 'undefined' ? window.location.href : ''),
+        submittedAt: new Date().toISOString(),
+      }),
+    });
+    return res.ok;
+  } catch (err) {
+    console.warn('Formspree dispatch error:', err);
+    return false;
+  }
+}
+
+/**
  * Sends feedback directly to Google Form from the client browser.
- * Uses both fetch(no-cors) and a hidden iframe form submission to guarantee delivery
- * across all browsers, CORS policies, ad-blockers, and static hosts (e.g. Netlify).
+ * Uses both fetch(no-cors) and a hidden iframe form submission to guarantee delivery.
  */
 export function sendDirectToGoogleForm(payload: {
   reason: string;
@@ -44,7 +81,7 @@ export function sendDirectToGoogleForm(payload: {
   const urlVal = payload.pageUrl || (typeof window !== 'undefined' ? window.location.href : '');
   const additionalVal = payload.additionalFeedback || 'N/A';
 
-  // 1. Primary method: fetch with mode 'no-cors'
+  // Method 1: fetch with mode 'no-cors'
   try {
     const formBody = new URLSearchParams();
     formBody.append(GOOGLE_FORM_ENTRIES.reason, reasonVal);
@@ -58,15 +95,12 @@ export function sendDirectToGoogleForm(payload: {
       mode: 'no-cors',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: formBody.toString(),
-    }).catch((err) => {
-      console.warn('Google Form fetch note:', err);
-    });
+    }).catch(() => {});
   } catch (e) {
-    // Continue to hidden form submission
+    // Continue
   }
 
-  // 2. Guaranteed fallback method: Hidden form targeted to a hidden iframe
-  // This bypasses any browser fetch restrictions, adblock script hooks, or CORB blocks.
+  // Method 2: Hidden form targeted to a hidden iframe
   try {
     if (typeof document !== 'undefined') {
       const iframeName = 'gf_hidden_submit_frame_' + Date.now();
@@ -101,18 +135,17 @@ export function sendDirectToGoogleForm(payload: {
       document.body.appendChild(form);
       form.submit();
 
-      // Clean up DOM after dispatch
       setTimeout(() => {
         try {
           document.body.removeChild(form);
           document.body.removeChild(iframe);
         } catch {
-          // Ignore cleanup errors
+          // Ignore
         }
       }, 3000);
     }
   } catch (domErr) {
-    console.warn('Hidden form dispatch note:', domErr);
+    // Ignore
   }
 }
 
@@ -178,22 +211,15 @@ export const feedbackService = {
    */
   isSuppressed: (): boolean => {
     try {
-      // 1. Suppress for visitors known to have completed signup
       if (localStorage.getItem(STORAGE_KEYS.HAS_JOINED) === 'true') {
         return true;
       }
-
-      // 2. Suppress if already submitted feedback
       if (localStorage.getItem(STORAGE_KEYS.FEEDBACK_SUBMITTED) === 'true') {
         return true;
       }
-
-      // 3. Suppress if shown this session
       if (sessionStorage.getItem(STORAGE_KEYS.SESSION_SHOWN) === 'true') {
         return true;
       }
-
-      // 4. Suppress if dismissed within the last 7 days
       const dismissedAt = localStorage.getItem(STORAGE_KEYS.FEEDBACK_DISMISSED_AT);
       if (dismissedAt) {
         const timeElapsed = Date.now() - parseInt(dismissedAt, 10);
@@ -201,7 +227,6 @@ export const feedbackService = {
           return true;
         }
       }
-
       return false;
     } catch {
       return false;
@@ -216,7 +241,6 @@ export const feedbackService = {
       localStorage.setItem(STORAGE_KEYS.FEEDBACK_SUBMITTED, 'true');
       sessionStorage.setItem(STORAGE_KEYS.SESSION_SHOWN, 'true');
 
-      // Keep record in localStorage too for offline resilience
       const existingStr = localStorage.getItem(STORAGE_KEYS.FEEDBACK_RECORDS_LOCAL) || '[]';
       const list = JSON.parse(existingStr);
       list.push(record);
@@ -228,8 +252,9 @@ export const feedbackService = {
 
   /**
    * Submit feedback:
-   * 1. Submits directly to Google Form from client browser (guaranteed to work on Netlify and static deployments).
-   * 2. Also calls /api/feedback backend endpoint if available.
+   * 1. Submits directly to Formspree (https://formspree.io/f/mkjokevb)
+   * 2. Also submits directly to Google Form for dual redundancy
+   * 3. Syncs with /api/feedback backend endpoint if present
    */
   submitFeedback: async (payload: {
     reason: string;
@@ -240,7 +265,17 @@ export const feedbackService = {
     pageUrl: string;
     honeypot?: string;
   }) => {
-    // DIRECT GOOGLE FORM SUBMISSION: Guaranteed to execute in browser
+    // 1. Submit to Formspree
+    const formspreePromise = sendToFormspree({
+      reason: payload.reason,
+      additionalFeedback: payload.additionalFeedback,
+      firstName: payload.firstName,
+      email: payload.email,
+      consent: payload.consent,
+      pageUrl: payload.pageUrl || window.location.href,
+    });
+
+    // 2. Dual submit to Google Form
     sendDirectToGoogleForm({
       reason: payload.reason,
       additionalFeedback: payload.additionalFeedback,
@@ -249,12 +284,15 @@ export const feedbackService = {
       pageUrl: payload.pageUrl || window.location.href,
     });
 
+    // Await Formspree
+    await formspreePromise;
+
     const fallbackToken = payload.email ? Math.random().toString(36).substring(2, 15) : undefined;
     const fallbackConfirmationLink = payload.email
       ? `${window.location.origin}?confirm_feedback=${fallbackToken}`
       : null;
 
-    // Optional backend sync (/api/feedback)
+    // 3. Optional local backend endpoint
     try {
       const response = await fetch('/api/feedback', {
         method: 'POST',
@@ -267,7 +305,7 @@ export const feedbackService = {
         return result;
       }
     } catch (err: any) {
-      // Backend unavailable (e.g. Netlify static hosting) - safe to continue
+      // Safe to ignore if deployed statically on Netlify
     }
 
     const localRecord = {
@@ -304,7 +342,7 @@ export const feedbackService = {
         return true;
       }
     } catch {
-      // Fallback: check local storage
+      // Fallback
     }
 
     try {
