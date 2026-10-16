@@ -4,18 +4,18 @@ import { feedbackService } from '../utils/feedbackService';
 interface UseExitIntentOptions {
   onTrigger?: () => void;
   enabled?: boolean;
-  inactivityMs?: number; // Inactivity delay (defaults to 10,000ms = 10s)
+  inactivityMs?: number; // Inactivity delay (now 5,000ms = 5s)
 }
 
 export function useExitIntent({
   onTrigger,
   enabled = true,
-  inactivityMs = 10000,
+  inactivityMs = 5000,
 }: UseExitIntentOptions = {}) {
   const [isOpen, setIsOpen] = useState(false);
   const previouslyFocusedElement = useRef<HTMLElement | null>(null);
 
-  // Check if device supports desktop cursor leave
+  // Check if device supports desktop cursor
   const isDesktopCursorSupported = useCallback(() => {
     if (typeof window === 'undefined') return false;
     const hasFinePointer = window.matchMedia('(pointer: fine)').matches;
@@ -52,6 +52,10 @@ export function useExitIntent({
     let isInteractingWithForm = false;
     let inactivityTimer: ReturnType<typeof setTimeout> | null = null;
 
+    // Track cursor velocity/direction to catch fast upward motion toward browser tab bar
+    let lastY = 0;
+    let lastTime = Date.now();
+
     // Detect when user is actively completing a form input
     const handleFocusIn = (e: FocusEvent) => {
       const target = e.target as HTMLElement | null;
@@ -72,7 +76,7 @@ export function useExitIntent({
       isInteractingWithForm = false;
     };
 
-    // 1. INACTIVITY TRIGGER (10 seconds without action)
+    // 1. INACTIVITY TRIGGER (5 seconds without action)
     const resetInactivityTimer = () => {
       if (inactivityTimer) {
         clearTimeout(inactivityTimer);
@@ -87,8 +91,8 @@ export function useExitIntent({
       }, inactivityMs);
     };
 
-    // User action events that reset the 10-second inactivity counter
-    const userActionEvents = ['mousemove', 'mousedown', 'keydown', 'scroll', 'touchstart', 'click'];
+    // User action events that reset the 5-second inactivity counter
+    const userActionEvents = ['mousedown', 'keydown', 'touchstart', 'click'];
     const handleUserActivity = () => {
       resetInactivityTimer();
     };
@@ -97,21 +101,49 @@ export function useExitIntent({
       window.addEventListener(evt, handleUserActivity, { passive: true });
     });
 
-    // Start initial 10s timer upon page load
+    // Start initial 5-second inactivity timer upon page load
     resetInactivityTimer();
 
-    // 2. EXIT INTENT TRIGGER: Cursor leaving top of the browser viewport (desktop)
-    const handleMouseLeave = (e: MouseEvent) => {
-      if (isDesktopCursorSupported() && e.clientY <= 0) {
-        if (isInteractingWithForm) return;
-        if (feedbackService.isSuppressed()) return;
+    // 2. EXIT INTENT TRIGGERS:
+    // A. Detect when hovering cursor toward the top of the browser window (clientY <= 25px moving up fast)
+    const handleMouseMove = (e: MouseEvent) => {
+      resetInactivityTimer();
 
+      if (!isDesktopCursorSupported()) return;
+      if (isInteractingWithForm) return;
+      if (feedbackService.isSuppressed()) return;
+
+      const now = Date.now();
+      const dt = now - lastTime;
+      const dy = e.clientY - lastY;
+
+      // If cursor is near top of viewport (clientY <= 30px) and moving upwards fast
+      if (e.clientY <= 30 && dt > 0) {
+        const speedY = dy / dt; // negative when moving up
+        if (speedY < -0.2 || e.clientY <= 10) {
+          openPopup();
+        }
+      }
+
+      lastY = e.clientY;
+      lastTime = now;
+    };
+
+    // B. Detect cursor leaving the document entirely through the top (clientY <= 0)
+    const handleMouseLeave = (e: MouseEvent) => {
+      if (!isDesktopCursorSupported()) return;
+      if (isInteractingWithForm) return;
+      if (feedbackService.isSuppressed()) return;
+
+      // Mouse left through the top edge (or into browser chrome/tabs/close button)
+      if (e.clientY <= 0 || e.relatedTarget === null) {
         openPopup();
       }
     };
 
     document.addEventListener('focusin', handleFocusIn);
     document.addEventListener('focusout', handleFocusOut);
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
     document.documentElement.addEventListener('mouseleave', handleMouseLeave);
 
     return () => {
@@ -121,6 +153,7 @@ export function useExitIntent({
       });
       document.removeEventListener('focusin', handleFocusIn);
       document.removeEventListener('focusout', handleFocusOut);
+      window.removeEventListener('mousemove', handleMouseMove);
       document.documentElement.removeEventListener('mouseleave', handleMouseLeave);
     };
   }, [enabled, inactivityMs, isDesktopCursorSupported, openPopup]);
