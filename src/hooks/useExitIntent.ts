@@ -4,7 +4,7 @@ import { feedbackService } from '../utils/feedbackService';
 interface UseExitIntentOptions {
   onTrigger?: () => void;
   enabled?: boolean;
-  inactivityMs?: number; // Inactivity delay (now 5,000ms = 5s)
+  inactivityMs?: number; // Inactivity delay (defaults to 5,000ms = 5s)
 }
 
 export function useExitIntent({
@@ -14,17 +14,12 @@ export function useExitIntent({
 }: UseExitIntentOptions = {}) {
   const [isOpen, setIsOpen] = useState(false);
   const previouslyFocusedElement = useRef<HTMLElement | null>(null);
-
-  // Check if device supports desktop cursor
-  const isDesktopCursorSupported = useCallback(() => {
-    if (typeof window === 'undefined') return false;
-    const hasFinePointer = window.matchMedia('(pointer: fine)').matches;
-    const hasHover = window.matchMedia('(hover: hover)').matches;
-    return hasFinePointer && hasHover;
-  }, []);
+  const hasTriggeredRef = useRef<boolean>(false);
 
   const openPopup = useCallback(() => {
+    if (hasTriggeredRef.current) return;
     if (!feedbackService.isSuppressed()) {
+      hasTriggeredRef.current = true;
       previouslyFocusedElement.current = document.activeElement as HTMLElement | null;
       feedbackService.markShownInSession();
       setIsOpen(true);
@@ -45,14 +40,15 @@ export function useExitIntent({
 
   useEffect(() => {
     if (!enabled) return;
+    if (hasTriggeredRef.current) return;
 
-    // If already suppressed (joined, submitted, or dismissed in last 7 days), don't attach triggers
+    // Check suppression
     if (feedbackService.isSuppressed()) return;
 
     let isInteractingWithForm = false;
     let inactivityTimer: ReturnType<typeof setTimeout> | null = null;
 
-    // Track cursor velocity/direction to catch fast upward motion toward browser tab bar
+    // Track cursor velocity & position
     let lastY = 0;
     let lastTime = Date.now();
 
@@ -76,22 +72,22 @@ export function useExitIntent({
       isInteractingWithForm = false;
     };
 
-    // 1. INACTIVITY TRIGGER (5 seconds without action)
+    // 1. INACTIVITY TRIGGER (5 seconds without user action)
     const resetInactivityTimer = () => {
       if (inactivityTimer) {
         clearTimeout(inactivityTimer);
       }
 
       inactivityTimer = setTimeout(() => {
-        // Do not trigger if user is actively filling out a form or already suppressed
         if (isInteractingWithForm) return;
+        if (hasTriggeredRef.current) return;
         if (feedbackService.isSuppressed()) return;
 
         openPopup();
       }, inactivityMs);
     };
 
-    // User action events that reset the 5-second inactivity counter
+    // User action events that reset the 5s timer
     const userActionEvents = ['mousedown', 'keydown', 'touchstart', 'click'];
     const handleUserActivity = () => {
       resetInactivityTimer();
@@ -101,26 +97,25 @@ export function useExitIntent({
       window.addEventListener(evt, handleUserActivity, { passive: true });
     });
 
-    // Start initial 5-second inactivity timer upon page load
+    // Start 5s inactivity countdown
     resetInactivityTimer();
 
-    // 2. EXIT INTENT TRIGGERS:
-    // A. Detect when hovering cursor toward the top of the browser window (clientY <= 25px moving up fast)
+    // 2. EXIT INTENT: Cursor moving towards browser chrome / top bar (e.g. tabs or close button)
     const handleMouseMove = (e: MouseEvent) => {
       resetInactivityTimer();
 
-      if (!isDesktopCursorSupported()) return;
       if (isInteractingWithForm) return;
+      if (hasTriggeredRef.current) return;
       if (feedbackService.isSuppressed()) return;
 
       const now = Date.now();
       const dt = now - lastTime;
       const dy = e.clientY - lastY;
 
-      // If cursor is near top of viewport (clientY <= 30px) and moving upwards fast
-      if (e.clientY <= 30 && dt > 0) {
-        const speedY = dy / dt; // negative when moving up
-        if (speedY < -0.2 || e.clientY <= 10) {
+      // If cursor is within top 40px of the viewport
+      if (e.clientY <= 40) {
+        // Either near top (<=15px) or moving up (dy < 0)
+        if (e.clientY <= 15 || (dt > 0 && dy < 0)) {
           openPopup();
         }
       }
@@ -129,22 +124,33 @@ export function useExitIntent({
       lastTime = now;
     };
 
-    // B. Detect cursor leaving the document entirely through the top (clientY <= 0)
+    // 3. EXIT INTENT: Cursor leaves the document through the top window boundaries
     const handleMouseLeave = (e: MouseEvent) => {
-      if (!isDesktopCursorSupported()) return;
       if (isInteractingWithForm) return;
+      if (hasTriggeredRef.current) return;
       if (feedbackService.isSuppressed()) return;
 
-      // Mouse left through the top edge (or into browser chrome/tabs/close button)
-      if (e.clientY <= 0 || e.relatedTarget === null) {
+      // Leaving top edge or leaving window
+      if (e.clientY <= 10 || e.relatedTarget === null) {
         openPopup();
       }
+    };
+
+    // 4. WINDOW BLUR (User clicks away to another tab, devtools, or address bar)
+    const handleWindowBlur = () => {
+      if (isInteractingWithForm) return;
+      if (hasTriggeredRef.current) return;
+      if (feedbackService.isSuppressed()) return;
+
+      // If user switches tab or clicks address bar
+      openPopup();
     };
 
     document.addEventListener('focusin', handleFocusIn);
     document.addEventListener('focusout', handleFocusOut);
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
     document.documentElement.addEventListener('mouseleave', handleMouseLeave);
+    window.addEventListener('blur', handleWindowBlur);
 
     return () => {
       if (inactivityTimer) clearTimeout(inactivityTimer);
@@ -155,8 +161,9 @@ export function useExitIntent({
       document.removeEventListener('focusout', handleFocusOut);
       window.removeEventListener('mousemove', handleMouseMove);
       document.documentElement.removeEventListener('mouseleave', handleMouseLeave);
+      window.removeEventListener('blur', handleWindowBlur);
     };
-  }, [enabled, inactivityMs, isDesktopCursorSupported, openPopup]);
+  }, [enabled, inactivityMs, openPopup]);
 
   return {
     isOpen,
